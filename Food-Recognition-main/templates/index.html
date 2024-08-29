@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Classification</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+
+<body>
+    <div class="image_form">
+        <h1>Indian Food Image Classification</h1>
+
+        <form action="/" method="post" enctype="multipart/form-data">
+            <label for="file" class="file-label">Choose File:</label>
+            <input type="file" id="file" name="file" onchange="displayFileName()" accept=".jpg, .jpeg, .png">
+            <span id="file-name">{{ name }}</span>
+            <br>
+            <div class="result-section">
+                {% if error %}
+                <p>{{ error }}</p>
+                {% endif %}
+                {% if filename %}
+                <h2>Result:</h2>
+                <p class="result">Total Calories: {{ total_calories }}.00 kcal</p>
+                {% for item in items_with_calories %}
+                <p class="result">{{item.get('label')}}: {{item.get('calories')}}.00 kcal</p>
+                {% endfor %}
+                <img src="{{ filename }}" alt="Result" width="750px">
+
+                <!-- <p>Items Detected: {{ items_with_calories }}</p> -->
+                <!-- Add this inside the result-section div -->
+                <form action="/feedback" method="post" id="feedbackForm">
+                    <h2>Feedback:</h2>
+
+                    <label style="color: white;">Was the prediction correct?</label>
+                    <div>
+                        <button type="button" id="correctbutton" onclick="setPrediction('correct')">Correct</button>
+                        <button type="button" id="incorrectbutton"
+                            onclick="setPrediction('incorrect')">Incorrect</button>
+                    </div>
+                    <label for="correct" id="correctpred" style="display:none;">Great!</label>
+                    <label for="correct_food" id="correctFoodLabel"
+                        style="display: none; font-family: 'Courier New', Courier, monospace;">Enter Correct Food
+                        Name:</label>
+                    <input type="text" id="correct_food" name="correct_food" placeholder="Correct food name"
+                        style="display: none; margin: auto;">
+
+                    <!-- Change the button to directly open the Google search link -->
+                    <button type="button" id="checkcal" style="display: none;" onclick="openGoogleSearchLink()">Check
+                        Calories</button>
+                </form>
+
+                {% endif %}
+                <input type="submit" value="Upload and Process">
+            </div>
+
+        </form>
+    </div>
+    <div class="dishlist">
+        <h3>List of 30 dishes the model has been trained on:</h3>
+        <ul>
+            <li>aloo-fry</li>
+            <li>aloo-gobi</li>
+            <li>bhature</li>
+            <li>bhindi-masala</li>
+            <li>chai</li>
+            <li>chicken-biryani</li>
+            <li>chicken-seekh-kebab</li>
+            <li>chole</li>
+            <li>coconut-chutney</li>
+            <li>dal-tadka</li>
+            <li>dosa</li>
+            <li>dum-aloo</li>
+            <li>fish-curry</li>
+            <li>ghevar</li>
+            <li>green-chutney</li>
+            <li>gulab-jamun</li>
+            <li>idli</li>
+            <li>jalebi</li>
+            <li>kheer</li>
+            <li>kulfi</li>
+            <li>lassi</li>
+            <li>mutton-curry</li>
+            <li>onion-pakoda</li>
+            <li>palak-paneer</li>
+            <li>poha</li>
+            <li>rajma-curry</li>
+            <li>rasmalai</li>
+            <li>samosa</li>
+            <li>shahi-paneer</li>
+            <li>white-rice</li>
+
+        </ul>
+    </div>
+    <script>
+        function displayFileName() {
+            var fileInput = document.getElementById('file');
+            var fileNameSpan = document.getElementById('file-name');
+            fileNameSpan.textContent = fileInput.files[0].name || 'No file chosen';
+            fileNameSpan.style.color='white';
+        }
+
+        function setPrediction(value) {
+            var correctFoodLabel = document.getElementById('correctFoodLabel');
+            var correctFoodInput = document.getElementById('correct_food');
+            var correctPrediction = document.getElementById('correctpred');
+            var corrbutton = document.getElementById('correctbutton');
+            var incorrbutton = document.getElementById('incorrectbutton');
+            var checkcalories = document.getElementById('checkcal');
+
+            if (value === 'incorrect') {
+                correctFoodLabel.style.display = 'block';
+                correctFoodInput.style.display = 'block';
+                corrbutton.style.display = 'none';
+                incorrbutton.style.display = 'none';
+                checkcalories.style.display = 'block';
+            } else {
+                correctPrediction.style.display = 'block';
+                correctPrediction.style.display = 'block';
+                corrbutton.style.display = 'none';
+                incorrbutton.style.display = 'none';
+            }
+        }
+
+        function openGoogleSearchLink() {
+            var correctFoodInput = document.getElementById('correct_food');
+
+            // Get the entered food name
+            var foodName = correctFoodInput.value.trim();
+
+            // Check if the food name is not empty
+            if (foodName !== '') {
+                // Generate the Google search link
+                var searchLink = `https://www.google.com/search?q=${encodeURIComponent(foodName)}+calories`;
+
+                // Open the link in a new tab or window
+                window.open(searchLink, '_blank');
+            } else {
+                alert('Please enter a correct food name first.');
+            }
+        }
+    </script>
+</body>
+
+</html>
